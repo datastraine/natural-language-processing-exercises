@@ -6,4 +6,4 @@ __pycache__/
 env.py
 *.xlsx
 *.json
-*_lesson
+*_lesson.ipynb
