@@ -89,8 +89,8 @@ def get_inshorts():
                 body_list.append(body.extract().text)
                 # store the results in a dictonary object that properly lables the key value pairs
                 # category is derivied from the url as each url's using string slicing
-                dicob = {"title":title.text, "content":body.text, "category":article[29:]}
-                # append each dicob to the list
-                inshorts.append(dicob)
-    # Return the article dictionary list
+            dicob = {"title":title.text, "content":body.text, "category":article[29:]}
+        # append each dicob to the list
+            inshorts.append(dicob)
+# Return the article dictionary list
     return inshorts
