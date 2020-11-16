@@ -68,6 +68,8 @@ def get_inshorts():
     articles = [business, sports, technology, entertainment]
     # use a for loop to iterate over each cateatogry to get into the URL
     for article in articles:
+        body_list = []
+        title_list = []
         url = article
         # assign the url to response
         response = get(url)
