@@ -8,7 +8,6 @@ import nltk
 from nltk.tokenize.toktok import ToktokTokenizer
 from nltk.corpus import stopwords
 
-
 def basic_clean(somestring):
     '''
     Take in a string and performs a basic clean by converting it to all lower case letters,
@@ -46,38 +45,47 @@ def lemmatize(somestring):
     article_lemmatized = ' '.join(lemmas)
     return article_lemmatized
 
-def remove_stopwords(somestring):
+def remove_stopwords(string, extra_words=[], exclude_words=[]):
     '''
-    Downloads the 'stopwords' library from nltk
-    Downloads the wordnet library from nltk
-    Uses the standard stop words english from the stopwords library minus not and no
-    ensures the string is in all lower case
-    removes all the words in the stopwords list
+    This function takes in a string, optional extra_words and exclude_words, default none for both 
+    and returns a string.
     '''
-    nltk.download('stopwords')
-    nltk.download('wordnet')
+    # Create stopword_list.
     stopword_list = stopwords.words('english')
-    stopword_list.remove('no')
-    stopword_list.remove('not')
-    somestring = somestring.lower()
-    words = somestring.split()
-    filtered_words = [w for w in words if w not in stopword_list]
-    article_without_stopwords = ' '.join(filtered_words)
-    return article_without_stopwords
+    # Remove 'exclude_words' from stopword_list to keep these in my text.
+    stopword_list = set(stopword_list) - set(exclude_words)
+    # Add in 'extra_words' to stopword_list.
+    stopword_list = stopword_list.union(set(extra_words))
+    # Split words in string.
+    words = string.split()
+    # Create a list of words from my string with stopwords removed and assign to variable.
+    filtered_words = [word for word in words if word not in stopword_list]
+    # Join words in the list back into strings and assign to a variable.
+    string_without_stopwords = ' '.join(filtered_words)
+    return string_without_stopwords
 
 def prep_news():
+    '''
+    Uses the above helper on the inshorts news data to creates following new columns
+    clean - applies basic_clean, tokenizatize, and removes stop words on the article contents
+    stemmed - applies stemming to the original contents
+    lemmatized - applies the lemmatize function to the original content
+    '''
     news_df = pd.DataFrame(acquire.get_inshorts())
-    news_df = news_df[['title', 'content']]
-    news_df.columns=['title', 'original']
-    news_df['clean'] = news_df['original'].apply(basic_clean).apply(tokenize).apply(remove_stopwords)
-    news_df['stemmed'] = news_df['original'].apply(stem)
-    news_df['lemmatized'] = news_df['original'].apply(lemmatize)
+    news_df['clean'] = news_df['content'].apply(basic_clean).apply(tokenize).apply(remove_stopwords)
+    news_df['stemmed'] = news_df['content'].apply(stem)
+    news_df['lemmatized'] = news_df['content'].apply(basic_clean).apply(lemmatize)
     return news_df
 
 def prep_blogs():
+    '''
+    Uses the above helper on the CodeUp blog data to creates following new columns
+    clean - applies basic_clean, tokenizatize, and remove stop words on the article contents
+    stemmed - applies stemming to the original contents
+    lemmatized - applies the lemmatize function to the original content
+    '''
     codeup_df = pd.DataFrame(acquire.get_blog_articles())
-    codeup_df.columns=['title', 'original']
-    codeup_df['clean'] = codeup_df['original'].apply(basic_clean).apply(tokenize).apply(remove_stopwords)
-    codeup_df['stemmed'] = codeup_df['original'].apply(stem)
-    codeup_df['lemmatized'] = codeup_df['original'].apply(lemmatize)
+    codeup_df['clean'] = codeup_df['content'].apply(basic_clean).apply(tokenize).apply(remove_stopwords)
+    codeup_df['stemmed'] = codeup_df['content'].apply(stem)
+    codeup_df['lemmatized'] = codeup_df['content'].apply(basic_clean).apply(lemmatize)
     return codeup_df
